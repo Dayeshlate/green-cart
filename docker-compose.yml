@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  green-mongo:
+    image: mongo:7
+    container_name: green-mongo-container
+    restart: always
+    networks:
+      - green-net
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - green-volume:/data/db
+    ports:
+      - "27017:27017"
+
+  green-client:
+    build:
+      context: ./client
+    container_name: green-client-container
+    networks:
+      - green-net
+    ports:
+      - "5173:5173"
+
+  green-server:
+    build:
+      context: ./server
+    container_name: green-server-container
+    networks:
+      - green-net
+    depends_on:
+      - green-mongo
+    ports:
+      - "3000:3000"
+    environment:
+      FRONTEND_URL: http://localhost:5173
+      PORT: 3000
+      MONGODB_URI: mongodb://root:root@green-mongo-container:27017/greencart?authSource=admin
+      JWT_SECRET: Gx9R4mP7QvA2ZsK8WJcE5L0N6FHyT3uB
+
+volumes:
+  green-volume:
+
+networks:
+  green-net:
+
