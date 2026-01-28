@@ -3,11 +3,9 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# Install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy source code
 COPY . .
 
 # ---------- Run Stage ----------
@@ -15,7 +13,6 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy only necessary files from build
 COPY --from=build /app /app
 
 ENV NODE_ENV=production
